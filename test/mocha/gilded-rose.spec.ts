@@ -8,6 +8,7 @@ describe("Gilded Rose", () => {
   //   expect(items[0].name).to.equal('fixme');
   // });
 
+  // NON SPECIAL ITEMS
   it("GivenNonSpecialItem_WhenADayPasses_ThenQualityMinusOne", () => {
     // Given
     const gildedRose = new GildedRose([
@@ -19,19 +20,42 @@ describe("Gilded Rose", () => {
     expect(items[0].quality).to.equal(6);
   });
 
-  it.only("GivenBackstagePasses_WhenSellinisOver10_ThenQualityPlusOne", () => {
+  it("GivenNonSpecialItemWithMinusSellIn_WhenADayPasses_ThenQualityMinusTwo", () => {
     // Given
     const gildedRose = new GildedRose([
-      new Item("Backstage passes to a TAFKAL80ETC concert", 11, 7),
+      new Item("Elixir of the Mongoose", -1, 7),
     ]);
     // When
     const items = gildedRose.updateQuality();
     // Then
-    expect(items[0].quality).to.equal(8);
-
+    expect(items[0].quality).to.equal(5);
   });
 
-  it.only("GivenBackstagePasses_WhenSellinIsBetween10Days&6Days<_ThenQualityPlusTwo", () => {
+  it.only("GivenNonSpecialItemWithZeroQuality_WhenADayPasses_ThenQualityEqualsZero", () => {
+    // Given
+    const gildedRose = new GildedRose([
+      new Item("Elixir of the Mongoose", 7, 0),
+    ]);
+    // When
+    const items = gildedRose.updateQuality();
+    // Then
+    expect(items[0].quality).to.equal(0);
+  });
+
+  // BACK STAGE PASSES
+  it("GivenBackstagePasses_WhenSellinisOver10_ThenQualityPlusOne", () => {
+    // Given
+    const quality = 7;
+    const gildedRose = new GildedRose([
+      new Item("Backstage passes to a TAFKAL80ETC concert", 11, quality),
+    ]);
+    // When
+    const items = gildedRose.updateQuality();
+    // Then
+    expect(items[0].quality).to.equal(quality + 1);
+  });
+
+  it("GivenBackstagePasses_WhenSellinIsBetween10Days&6Days<_ThenQualityPlusTwo", () => {
     // Given
     const gildedRose = new GildedRose([
       new Item("Backstage passes to a TAFKAL80ETC concert", 10, 7),
@@ -40,10 +64,11 @@ describe("Gilded Rose", () => {
     // When
     const items = gildedRose.updateQuality();
     // Then
-    expect(items[0].quality && items[1].quality).to.equal(9);
+    expect(items[0].quality).to.equal(9);
+    expect(items[1].quality).to.equal(9);
   });
 
-  it.only("GivenBackstagePasses_WhenSellinIsBetween5Days&0Days<_ThenQualityPlusThree", () => {
+  it("GivenBackstagePasses_WhenSellinIsBetween5Days&0Days<_ThenQualityPlusThree", () => {
     // Given
     const gildedRose = new GildedRose([
       new Item("Backstage passes to a TAFKAL80ETC concert", 5, 3),
@@ -53,17 +78,23 @@ describe("Gilded Rose", () => {
     const items = gildedRose.updateQuality();
     // Then
     expect(items[0].quality && items[1].quality).to.equal(6);
+  });
 
+  it("GivenBackstagePasses_WhenSellinDateIsPassed<_ThenQuality=0", () => {
+    // Given
+    const gildedRose = new GildedRose([
+      new Item("Backstage passes to a TAFKAL80ETC concert", 0, 3),
+    ]);
+    // When
+    const items = gildedRose.updateQuality();
+    // Then
+    expect(items[0].quality).to.equal(0);
   });
 });
 
 // name: string;
 // sellIn: number;  the number of days we have to sell the item
 // quality: number; denotes how valuable the item is
-
-// if (this.items[i].quality < 50) {
-//   this.items[i].quality = this.items[i].quality + 1
-//   if (this.items[i].name == 'Backstage passes to a TAFKAL80ETC concert') {
 
 // constructor(name, sellIn, quality) {
 //   this.name = name;
