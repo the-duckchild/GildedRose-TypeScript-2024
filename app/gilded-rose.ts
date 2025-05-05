@@ -10,12 +10,15 @@ export class Item {
   }
 }
 
-enum itemList {
-  BRIE = "BRIE",
+enum specialItems {
+  BRIE = "Aged Brie",
   BACKSTAGE = "Backstage passes to a TAFKAL80ETC concert",
   SULFURAS = "Sulfuras, Hand of Ragnaros",
-  ELIXIR = "Elixir of the Mongoose",
   CAKE = "Conjured Mana Cake",
+}
+
+enum standardItems {
+  ELIXIR = "Elixir of the Mongoose"
 }
 
 export class GildedRose {
@@ -26,60 +29,43 @@ export class GildedRose {
   }
 
   updateQuality() {
+    let itemExists;
     for (let i = 0; i < this.items.length; i++) {
-      if (
-        this.items[i].name != "itemList.BRIE" &&
-        this.items[i].name != "itemList.BACKSTAGE"
-      ) {
-        if (this.items[i].quality > 0) {
-          if (this.items[i].name != "itemList.SULFURAS") {
+      let itemName = this.items[i].name;
+      const itemIsStandard = Object.values(standardItems).includes(itemName as standardItems);
+      const itemIsSpecial = Object.values(specialItems).includes(itemName as specialItems);
+
+        if (itemIsStandard) {
+          if (this.items[i].quality > 0) {
             this.items[i].quality = this.items[i].quality - 1;
           }
-        }
-      } else {
-        if (this.items[i].quality < 50) {
-          this.items[i].quality = this.items[i].quality + 1;
-          if (
-            this.items[i].name == "itemList.BACKSTAGE"
-          ) {
-            if (this.items[i].sellIn < 11) {
-              if (this.items[i].quality < 50) {
-                this.items[i].quality = this.items[i].quality + 1;
-              }
-            }
-            if (this.items[i].sellIn < 6) {
-              if (this.items[i].quality < 50) {
-                this.items[i].quality = this.items[i].quality + 1;
-              }
-            }
-          }
-        }
-      }
-      if (this.items[i].name != "itemList.SULFURAS") {
-        this.items[i].sellIn = this.items[i].sellIn - 1;
-      }
-      if (this.items[i].sellIn < 0) {
-        if (this.items[i].name != "itemList.BRIE") {
-          if (
-            this.items[i].name != "itemList.BACKSTAGE"
-          ) {
-            if (this.items[i].quality > 0) {
-              if (this.items[i].name != "itemList.SULFURAS") {
-                this.items[i].quality = this.items[i].quality - 1;
-              }
-            }
-          } else {
-            this.items[i].quality =
-              this.items[i].quality - this.items[i].quality;
-          }
-        } else {
+        } else if (itemIsSpecial && itemName != specialItems.SULFURAS) {
           if (this.items[i].quality < 50) {
             this.items[i].quality = this.items[i].quality + 1;
+            if (itemName === specialItems.BACKSTAGE) {
+              if (this.items[i].sellIn < 11 && this.items[i].quality < 50) {
+                  this.items[i].quality = this.items[i].quality + 1;
+              }
+              if (this.items[i].sellIn < 6 && (this.items[i].quality < 50)) {
+                  this.items[i].quality = this.items[i].quality + 1;
+              }
+            }
           }
         }
-      }
-    }
 
+        if (itemName != specialItems.SULFURAS) {
+          this.items[i].sellIn = this.items[i].sellIn - 1;
+        }
+
+
+        if (this.items[i].sellIn < 0) {
+            if (itemIsStandard && this.items[i].quality > 0) {
+                  this.items[i].quality = this.items[i].quality - 1;
+            } else if (itemName === specialItems.BACKSTAGE) {
+              this.items[i].quality = this.items[i].quality - this.items[i].quality;
+            }
+        }
+    }
     return this.items;
   }
 }
