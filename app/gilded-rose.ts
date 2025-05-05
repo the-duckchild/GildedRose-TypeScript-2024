@@ -46,6 +46,8 @@ export class GildedRose {
         } else if (itemIsConjured) {
           if (this.items[i].quality >= 2) {
             this.items[i].quality = this.items[i].quality - 2;
+          } else {
+            this.items[i].quality = 0;
           }
         } else if (itemIsSpecial && itemName != specialItems.SULFURAS) {
           if (this.items[i].quality < 50) {

@@ -162,6 +162,18 @@ describe("Gilded Rose", () => {
     expect(items[0].quality).to.equal(quality - 4);
   });
 
+  it("GivenConjuredItemWithQualityUnder2_WhenADayPasses_ThenQuality=0", () => {
+    // Given
+    let quality = 1;
+    const gildedRose = new GildedRose([new Item("Conjured Mana Cake", 1, quality)]);
+    // When
+    const items = gildedRose.updateQuality();
+    // Then
+    console.log(items[0].quality);
+    expect(items[0].quality).to.equal(0);
+  });
+
+
 });
 
 
