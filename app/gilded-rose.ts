@@ -14,11 +14,14 @@ enum specialItems {
   BRIE = "Aged Brie",
   BACKSTAGE = "Backstage passes to a TAFKAL80ETC concert",
   SULFURAS = "Sulfuras, Hand of Ragnaros",
-  CAKE = "Conjured Mana Cake",
 }
 
 enum standardItems {
   ELIXIR = "Elixir of the Mongoose"
+}
+
+enum conjuredItems {
+  CAKE = "Conjured Mana Cake"
 }
 
 export class GildedRose {
@@ -34,10 +37,15 @@ export class GildedRose {
       let itemName = this.items[i].name;
       const itemIsStandard = Object.values(standardItems).includes(itemName as standardItems);
       const itemIsSpecial = Object.values(specialItems).includes(itemName as specialItems);
+      const itemIsConjured = Object.values(conjuredItems).includes(itemName as conjuredItems);
 
         if (itemIsStandard) {
           if (this.items[i].quality > 0) {
             this.items[i].quality = this.items[i].quality - 1;
+          }
+        } else if (itemIsConjured) {
+          if (this.items[i].quality >= 2) {
+            this.items[i].quality = this.items[i].quality - 2;
           }
         } else if (itemIsSpecial && itemName != specialItems.SULFURAS) {
           if (this.items[i].quality < 50) {
@@ -60,7 +68,13 @@ export class GildedRose {
 
         if (this.items[i].sellIn < 0) {
             if (itemIsStandard && this.items[i].quality > 0) {
-                  this.items[i].quality = this.items[i].quality - 1;
+              this.items[i].quality = this.items[i].quality - 1;
+            } else if (itemIsConjured) {
+              if (this.items[i].quality >= 2) {
+                this.items[i].quality = this.items[i].quality - 2;
+              } else {
+                this.items[i].quality = 0;
+              }
             } else if (itemName === specialItems.BACKSTAGE) {
               this.items[i].quality = this.items[i].quality - this.items[i].quality;
             }
