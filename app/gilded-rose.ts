@@ -33,55 +33,73 @@ export class GildedRose {
 
   updateQuality() {
     let itemExists;
+
     for (let i = 0; i < this.items.length; i++) {
       let itemName = this.items[i].name;
+      const item = this.items[i];
       const itemIsStandard = Object.values(standardItems).includes(itemName as standardItems);
       const itemIsSpecial = Object.values(specialItems).includes(itemName as specialItems);
       const itemIsConjured = Object.values(conjuredItems).includes(itemName as conjuredItems);
 
         if (itemIsStandard) {
-          if (this.items[i].quality > 0) {
-            this.items[i].quality = this.items[i].quality - 1;
+          if (item.quality > 0) {
+            this.decreaseStandardItemQuality(item);
           }
         } else if (itemIsConjured) {
-          if (this.items[i].quality >= 2) {
-            this.items[i].quality = this.items[i].quality - 2;
-          } else {
-            this.items[i].quality = 0;
-          }
+          this.decreaseConjuredItemQuality(item);
         } else if (itemIsSpecial && itemName != specialItems.SULFURAS) {
-          if (this.items[i].quality < 50) {
-            this.items[i].quality = this.items[i].quality + 1;
+          if (item.quality < 50) {
+            this.increaseSpecialItemQuality(item);
             if (itemName === specialItems.BACKSTAGE) {
-              if (this.items[i].sellIn < 11 && this.items[i].quality < 50) {
-                  this.items[i].quality = this.items[i].quality + 1;
-              }
-              if (this.items[i].sellIn < 6 && (this.items[i].quality < 50)) {
-                  this.items[i].quality = this.items[i].quality + 1;
-              }
+              this.increaseBackstagePassQuality(item);
             }
           }
         }
 
         if (itemName != specialItems.SULFURAS) {
-          this.items[i].sellIn = this.items[i].sellIn - 1;
+          this.adjustSellIn(item)
         }
 
-
-        if (this.items[i].sellIn < 0) {
-            if (itemIsStandard && this.items[i].quality > 0) {
-              this.items[i].quality = this.items[i].quality - 1;
+        let sellInDatePassed = item.sellIn < 0;
+        if (sellInDatePassed){
+            if (itemIsStandard && item.quality > 0) {
+              this.decreaseStandardItemQuality(item);
             } else if (itemIsConjured) {
-              if (this.items[i].quality >= 2) {
-                this.items[i].quality = this.items[i].quality - 2;
-              } else {
-                this.items[i].quality = 0;
-              }
+              this.decreaseConjuredItemQuality(item)
             } else if (itemName === specialItems.BACKSTAGE) {
-              this.items[i].quality = this.items[i].quality - this.items[i].quality;
+              this.reduceQualityToZero(item);
             }
         }
     }
     return this.items;
+  }
+
+  decreaseStandardItemQuality(item: Item) {
+    item.quality = item.quality - 1;
+  } 
+
+  decreaseConjuredItemQuality(item: Item) {
+    item.quality = item.quality >= 2 ? item.quality - 2: item.quality = 0;
+  } 
+
+  reduceQualityToZero(item: Item) {
+    item.quality = 0;
+  }
+
+  increaseSpecialItemQuality(item: Item) {
+    item.quality = item.quality + 1;
+  }
+
+  increaseBackstagePassQuality(item: Item) {
+    if (item.sellIn < 11 && item.quality < 50) {
+      item.quality = item.quality + 1;
+    }
+    if (item.sellIn < 6 && (item.quality < 50)) {
+      item.quality = item.quality + 1;
+    }
+  }
+
+  adjustSellIn(item: Item) {
+    item.sellIn = item.sellIn - 1;
   }
 }

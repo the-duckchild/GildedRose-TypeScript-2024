@@ -113,7 +113,6 @@ describe("Gilded Rose", () => {
     // When
     const items = gildedRose.updateQuality();
     // Then
-    console.log(items[0].quality)
     expect(items[0].quality).to.equal(quality + 1);
   });
 
@@ -135,7 +134,6 @@ describe("Gilded Rose", () => {
     // When
     const items = gildedRose.updateQuality();
     // Then
-    console.log(items[0].quality)
     expect(items[0].quality).to.equal(quality);
   });
 
@@ -158,19 +156,27 @@ describe("Gilded Rose", () => {
     // When
     const items = gildedRose.updateQuality();
     // Then
-    console.log(items[0].quality);
     expect(items[0].quality).to.equal(quality - 4);
   });
 
   it("GivenConjuredItemWithQualityUnder2_WhenADayPasses_ThenQuality=0", () => {
     // Given
     let quality = 1;
-    const gildedRose = new GildedRose([new Item("Conjured Mana Cake", 1, quality)]);
+    const gildedRose = new GildedRose([new Item("Conjured Mana Cake", 0, quality)]);
     // When
     const items = gildedRose.updateQuality();
     // Then
-    console.log(items[0].quality);
     expect(items[0].quality).to.equal(0);
+  });
+
+    it("GivenMultipleItems_WhenADayPasses_ThenQualityIsAdjusted", () => {
+    // Given
+    const gildedRose = new GildedRose([new Item("Conjured Mana Cake", 0, 2), new Item("Aged Brie", 3, 3)]);
+    // When
+    const items = gildedRose.updateQuality();
+    // Then
+    expect(items[0].quality).to.equal(0);
+    expect(items[1].quality).to.equal(4);
   });
 
 
